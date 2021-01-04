@@ -222,6 +222,11 @@ extern int __fake_use_va_args(int, ...);
 /*
  * Simplified macro to send a debug log message using the current LOG_TAG.
  */
+
+#ifndef XLOGD
+#define XLOGD(...) ((void)XRAYLOG(LOG_DEBUG, LOG_TAG, __VA_ARGS__))
+#endif
+
 #ifndef ALOGD
 #define ALOGD(...) ((void)ALOG(LOG_DEBUG, LOG_TAG, __VA_ARGS__))
 #endif
@@ -328,7 +333,12 @@ extern int __fake_use_va_args(int, ...);
  * The second argument may be NULL or "" to indicate the "global" tag.
  */
 #ifndef ALOG
-#define ALOG(priority, tag, ...) LOG_PRI(ANDROID_##priority, tag, __VA_ARGS__)
+#define ALOG(priority, tag, ...) __nullLog(0,tag,__VA_ARGS__)
+inline int __nullLog(int dummy,...){return dummy;}
+#endif
+
+#ifndef XRAYLOG
+#define XRAYLOG(priority, tag, ...) LOG_PRI(ANDROID_##priority, tag, __VA_ARGS__)
 #endif
 
 /*
