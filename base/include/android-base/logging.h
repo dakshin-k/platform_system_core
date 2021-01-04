@@ -62,7 +62,9 @@
 
 #include <functional>
 #include <memory>
-#include <ostream>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 #include "android-base/macros.h"
 
@@ -235,7 +237,8 @@ struct LogAbortAfterFullExpr {
 // FATAL it also causes an abort. For example:
 //
 //     LOG(FATAL) << "We didn't expect to reach here";
-#define LOG(severity) LOG_TO(DEFAULT, severity)
+#define LOG(severity) LOGGING_PREAMBLE(severity) && ::android::base::NullLog().stream()
+#define XRAY(severity) LOG_TO(DEFAULT,severity)
 
 // Checks if we want to log something, and sets up appropriate RAII objects if
 // so.
@@ -433,7 +436,7 @@ class LogMessage {
  public:
   LogMessage(const char* file, unsigned int line, LogId id, LogSeverity severity, const char* tag,
              int error);
-
+  
   ~LogMessage();
 
   // Returns the stream associated with the message, the LogMessage performs
@@ -448,6 +451,15 @@ class LogMessage {
   const std::unique_ptr<LogMessageData> data_;
 
   DISALLOW_COPY_AND_ASSIGN(LogMessage);
+
+};
+
+class NullLog {
+    public:
+    NullLog();
+    ~NullLog();
+    std::ostringstream& stream();
+    std::ostringstream buffer;
 };
 
 // Get the minimum severity level for logging.

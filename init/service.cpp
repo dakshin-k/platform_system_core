@@ -953,7 +953,7 @@ Result<Success> Service::Start() {
 
     post_data_ = ServiceList::GetInstance().IsPostData();
 
-    LOG(INFO) << "starting service '" << name_ << "'...";
+    XRAY(INFO) << "starting service '" << name_ << "'...";
 
     pid_t pid = -1;
     if (namespace_flags_) {

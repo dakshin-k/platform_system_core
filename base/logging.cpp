@@ -401,9 +401,20 @@ class LogMessageData {
   DISALLOW_COPY_AND_ASSIGN(LogMessageData);
 };
 
+NullLog::NullLog() {
+    
+}
+NullLog::~NullLog() {
+
+}
+std::ostringstream& NullLog::stream() {
+    return buffer;
+}
+
 LogMessage::LogMessage(const char* file, unsigned int line, LogId id, LogSeverity severity,
                        const char* tag, int error)
-    : data_(new LogMessageData(file, line, id, severity, tag, error)) {}
+    : data_(new LogMessageData(file, line, id, severity, tag, error)) {
+    }
 
 LogMessage::~LogMessage() {
   // Check severity again. This is duplicate work wrt/ LOG macros, but not LOG_STREAM.
